@@ -195,3 +195,30 @@ class AutoDriverComando(object):
         direction = ctypes.c_int16(direction)
         steps = ctypes.c_int16(steps)
         self.cmd.send_command(12, (board_ind, direction, steps))
+
+class AutoDriverComandoLoadCell(AutoDriverComando):
+    def tare(self):
+        """
+        tares the scale
+        """
+        self.cmd.send_command(14)
+        
+    def reset(self):
+        """
+        resets the scale should be done before calibrating with no weight on it
+        """
+        self.cmd.send_command(15)
+    
+    def calibrate(self, flt_weight, int_n_avg=20):
+        """
+        calibrates the scale to put units of the weight that is on it.
+        """
+        self.cmd.send_command(16, (int_n_avg, flt_weight))
+        self._wait_response()
+        
+    def read_force(self, n_readings=20):
+        """
+        reads force off the scale
+        """
+        self.cmd.send_command(17, (n_readings,))
+        self._wait_response()
